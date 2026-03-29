@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: metaphor-practice
+  sql:
+    init:
+      mode: always
