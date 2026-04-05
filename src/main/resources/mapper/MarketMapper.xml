@@ -10,7 +10,7 @@
             <arg column="base_asset_id" javaType="Long"/>
             <arg column="quote_asset_id" javaType="Long"/>
             <arg column="symbol" javaType="String"/>
-            <arg column="status" javaType="int"/>
+            <arg column="status" javaType="Integer"/>
         </constructor>
     </resultMap>
 
