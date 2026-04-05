@@ -5,18 +5,17 @@ import java.math.BigDecimal;
 
 /**
  * 下單請求資料傳輸物件
+ * 修復資產保護結構：移除個別資產 ID，改用交易市場 marketId
  */
-@Schema(description = "下單請求資訊")
+@Schema(description = "下單請求資訊 (基於市場 ID)")
 public record OrderRequest(
-        @Schema(description = "交易員 ID", example = "1001") Long traderId,
+        @Schema(description = "交易員 ID", example = "1") Long traderId,
 
-        @Schema(description = "基礎資產 ID (例如 VT 的 ID)", example = "1") Long baseAssetId,
+        @Schema(description = "交易市場 ID (如 VT/USD 市場)", example = "101") Long marketId,
 
-        @Schema(description = "計價資產 ID (例如 USDT 的 ID)", example = "2") Long quoteAssetId,
+        @Schema(description = "交易方向 (0: 買入, 1: 賣出)", example = "0") int side,
 
-        @Schema(description = "交易方向 (1: 買入, 2: 賣出)", example = "1") int side,
+        @Schema(description = "委託價格", example = "500.00") BigDecimal price,
 
-        @Schema(description = "委託價格", example = "50000.00") BigDecimal price,
-
-        @Schema(description = "委託數量", example = "0.5") BigDecimal totalQty) {
+        @Schema(description = "委託數量", example = "2.5") BigDecimal totalQty) {
 }
