@@ -27,6 +27,7 @@ dependencies {
   	testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
   	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
   	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1")
+	testImplementation("com.h2database:h2")
   	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
