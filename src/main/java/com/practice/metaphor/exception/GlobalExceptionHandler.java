@@ -1,30 +1,39 @@
 package com.practice.metaphor.exception;
 
 import com.practice.metaphor.dto.ApiResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * 全域例外攔截器
- * 捕捉業務發生異常時，將髒髒的 Stacktrace 轉換為乾淨的 ApiResponse 回傳
+ * 全域例外攔截器 - [終極安全版]
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
-     * 處理業務邏輯異常 (如餘額不足、市場不存在)
+     * 【業務異常】：這是我們自己丟出的「餘額不足」、「市場無效」
+     * 這些訊息需要明確讓使用者看見，且不需要印出詳細 Stacktrack
      */
-    @ExceptionHandler(RuntimeException.class)
-    public ApiResponse<Void> handleRuntimeException(RuntimeException e) {
-        // 設定 400 為普通業務邏輯錯誤代碼
+    @ExceptionHandler(BusinessException.class)
+    public ApiResponse<Void> handleBusinessException(BusinessException e) {
+        log.warn("【業務攔截】: {}", e.getMessage());
         return ApiResponse.error(400, e.getMessage());
     }
 
     /**
-     * 處理所有未捕捉的異常 (500)
+     * 【系統異常】：凡是 MyBatis、資料庫報錯、空指標 (NPE)、語法錯誤
+     * 全部都在這裡被「蒙面」。我們只給前端一個模糊的提示與 Error ID。
      */
-    @ExceptionHandler(Exception.class)
-    public ApiResponse<Void> handleOtherException(Exception e) {
-        return ApiResponse.error(500, "系統發生未預期錯誤：" + e.getMessage());
+    @ExceptionHandler(Throwable.class)
+    public ApiResponse<Void> handleOtherException(Throwable e) {
+        // 在伺服器端印出「完整」錯誤，方便工程師救火
+        log.error("【系統崩潰】關鍵錯誤: ", e);
+        
+        // 對外呈現絕對友善且安全的訊息
+        return ApiResponse.error(500, "交易系統繁忙，請稍後重試。 (Support ID: " + System.currentTimeMillis() + ")");
     }
 }

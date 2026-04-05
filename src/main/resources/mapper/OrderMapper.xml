@@ -4,64 +4,59 @@
 
 <mapper namespace="com.practice.metaphor.mapper.OrderMapper">
 
-    <!-- 
-        【Positional Strictly 版 ResultMap】 
-        適用於 Java Record: 委託單映射。
-        順序必須對應建構子：id, traderId, baseAssetId, quoteAssetId, side, price, totalQty, filledQty, status, createdAt
-    -->
     <resultMap id="OrderMap" type="com.practice.metaphor.model.entity.Order">
-        <constructor>
-            <idArg column="id" javaType="Long"/>
-            <arg column="trader_id" javaType="Long"/>
-            <arg column="base_asset_id" javaType="Long"/>
-            <arg column="quote_asset_id" javaType="Long"/>
-            <arg column="side" javaType="Integer"/>
-            <arg column="price" javaType="java.math.BigDecimal"/>
-            <arg column="total_qty" javaType="java.math.BigDecimal"/>
-            <arg column="filled_qty" javaType="java.math.BigDecimal"/>
-            <arg column="status" javaType="Integer"/>
-            <arg column="created_at" javaType="java.time.LocalDateTime"/>
-        </constructor>
+        <id property="id" column="id"/>
+        <result property="traderId" column="trader_id"/>
+        <result property="baseAssetId" column="base_asset_id"/>
+        <result property="quoteAssetId" column="quote_asset_id"/>
+        <result property="side" column="side"/>
+        <result property="price" column="price"/>
+        <result property="totalQty" column="total_qty"/>
+        <result property="filledQty" column="filled_qty"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
     </resultMap>
 
-    <insert id="insert">
-        INSERT INTO orders (
-            trader_id,
-            base_asset_id,
-            quote_asset_id,
-            side,
-            price,
-            total_qty,
-            filled_qty,
-            status,
-            created_at
-        ) VALUES (
-            #{traderId},
-            #{baseAssetId},
-            #{quoteAssetId},
-            #{side},
-            #{price},
-            #{totalQty},
-            #{filledQty},
-            #{status},
-            #{createdAt}
-        )
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (trader_id, base_asset_id, quote_asset_id, side, price, total_qty, filled_qty, status)
+        VALUES (#{traderId}, #{baseAssetId}, #{quoteAssetId}, #{side}, #{price}, #{totalQty}, #{filledQty}, #{status})
     </insert>
 
-    <select id="findById" resultMap="OrderMap">
-        SELECT
-            id,
-            trader_id,
-            base_asset_id,
-            quote_asset_id,
-            side,
-            price,
-            total_qty,
-            filled_qty,
-            status,
-            created_at
-        FROM orders
-        WHERE id = #{id}
+    <select id="findByIdForUpdate" resultMap="OrderMap">
+        SELECT 
+            id, trader_id, base_asset_id, quote_asset_id, side, price, 
+            total_qty, filled_qty, status, created_at
+        FROM orders 
+        WHERE id = #{id} FOR UPDATE
     </select>
+
+    <!-- 撮合核心：尋找最優對手單 -->
+    <select id="findMakers" resultMap="OrderMap">
+        SELECT 
+            id, trader_id, base_asset_id, quote_asset_id, side, price, 
+            total_qty, filled_qty, status, created_at
+        FROM orders
+        WHERE base_asset_id = #{baseAssetId}
+          AND quote_asset_id = #{quoteAssetId}
+          AND side = #{side}
+          AND status IN (0, 1) -- 0: 新訂單, 1: 部分成交
+          AND 
+          <choose>
+              <when test="side == 0"> <!-- 找對手買單 (賣家主動賣出時): 買價要高於等於我的賣價 -->
+                  <![CDATA[ price >= #{price} ]]> ORDER BY price DESC, created_at ASC
+              </when>
+              <otherwise>          <!-- 找對手賣單 (買家主動買入時): 賣價要低於等於我的買價 -->
+                  <![CDATA[ price <= #{price} ]]> ORDER BY price ASC, created_at ASC
+              </otherwise>
+          </choose>
+        FOR UPDATE -- 加鎖！避免同一張單子被多個成交情境重複吃掉
+    </select>
+
+    <update id="updateOrderProgress">
+        UPDATE orders
+        SET filled_qty = #{filledQty},
+            status = #{status}
+        WHERE id = #{id}
+    </update>
 
 </mapper>

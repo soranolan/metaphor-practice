@@ -33,6 +33,9 @@ class TradingServiceTest {
     @Mock
     private MarketMapper marketMapper; // 新增：模擬市場規則查詢
 
+    @Mock
+    private MatchingService matchingService; // 修復 NPE
+
     @InjectMocks
     private TradingService tradingService;
 
