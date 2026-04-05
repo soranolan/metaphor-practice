@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  *
  * @param id            唯一 ID
  * @param traderId      下單交易員 ID
- * @param baseAssetId   標的資產 ID (如 TSM)
+ * @param baseAssetId   標的資產 ID (如 VT)
  * @param quoteAssetId  計價資產 ID (如 USD)
  * @param side          方向：0: BUY, 1: SELL
  * @param price         委託價格

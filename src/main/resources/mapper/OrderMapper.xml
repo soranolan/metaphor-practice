@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practice.metaphor.mapper.OrderMapper">
+
+    <!-- 
+        【Positional Strictly 版 ResultMap】 
+        適用於 Java Record: 委託單映射。
+        順序必須對應建構子：id, traderId, baseAssetId, quoteAssetId, side, price, totalQty, filledQty, status, createdAt
+    -->
+    <resultMap id="OrderMap" type="com.practice.metaphor.model.entity.Order">
+        <constructor>
+            <idArg column="id" javaType="Long"/>
+            <arg column="trader_id" javaType="Long"/>
+            <arg column="base_asset_id" javaType="Long"/>
+            <arg column="quote_asset_id" javaType="Long"/>
+            <arg column="side" javaType="Integer"/>
+            <arg column="price" javaType="java.math.BigDecimal"/>
+            <arg column="total_qty" javaType="java.math.BigDecimal"/>
+            <arg column="filled_qty" javaType="java.math.BigDecimal"/>
+            <arg column="status" javaType="Integer"/>
+            <arg column="created_at" javaType="java.time.LocalDateTime"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO orders (
+            trader_id,
+            base_asset_id,
+            quote_asset_id,
+            side,
+            price,
+            total_qty,
+            filled_qty,
+            status,
+            created_at
+        ) VALUES (
+            #{traderId},
+            #{baseAssetId},
+            #{quoteAssetId},
+            #{side},
+            #{price},
+            #{totalQty},
+            #{filledQty},
+            #{status},
+            #{createdAt}
+        )
+    </insert>
+
+    <select id="findById" resultMap="OrderMap">
+        SELECT
+            id,
+            trader_id,
+            base_asset_id,
+            quote_asset_id,
+            side,
+            price,
+            total_qty,
+            filled_qty,
+            status,
+            created_at
+        FROM orders
+        WHERE id = #{id}
+    </select>
+
+</mapper>
