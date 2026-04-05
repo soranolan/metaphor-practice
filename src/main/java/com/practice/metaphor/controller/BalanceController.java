@@ -1,18 +1,16 @@
 package com.practice.metaphor.controller;
 
 import com.practice.metaphor.api.BalanceApi;
+import com.practice.metaphor.dto.ApiResponse;
 import com.practice.metaphor.mapper.BalanceMapper;
 import com.practice.metaphor.model.entity.Balance;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
- * 餘額控制器
- * 實作 BalanceApi 介面，保持程式碼整潔
+ * 餘額管理控制器
  */
 @RestController
 @RequestMapping("/api/balances")
@@ -25,9 +23,9 @@ public class BalanceController implements BalanceApi {
     }
 
     @Override
-    @GetMapping("/{traderId}")
-    public List<Balance> getBalances(@PathVariable Long traderId) {
-        // 現在改為調用 findByTraderId 來獲取該交易員的所有資產列表
-        return balanceMapper.findByTraderId(traderId);
+    public ApiResponse<List<Balance>> getBalances(Long traderId) {
+        List<Balance> balances = balanceMapper.findByTraderId(traderId);
+        // 使用包裝器封裝成功回傳
+        return ApiResponse.success(balances);
     }
 }
