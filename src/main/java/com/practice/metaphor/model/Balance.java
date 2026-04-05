@@ -1,8 +1,5 @@
 package com.practice.metaphor.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,9 +13,8 @@ import java.time.LocalDateTime;
  * @param frozenAmount    凍結餘額 (掛單中)
  * @param updatedAt       更新時間
  */
-@Table("balances")
 public record Balance(
-    @Id Long id,
+    Long id,
     Long traderId,
     Long assetId,
     BigDecimal availableAmount,

@@ -19,12 +19,12 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
-	testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
+	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

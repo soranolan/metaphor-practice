@@ -1,8 +1,5 @@
 package com.practice.metaphor.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -20,9 +17,8 @@ import java.time.LocalDateTime;
  * @param status        狀態：0: NEW, 1: PARTIAL, 2: FILLED, 3: CANCELED
  * @param createdAt     下單時間
  */
-@Table("orders")
 public record Order(
-    @Id Long id,
+    Long id,
     Long traderId,
     Long baseAssetId,
     Long quoteAssetId,

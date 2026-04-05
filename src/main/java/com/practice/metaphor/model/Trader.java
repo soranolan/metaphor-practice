@@ -1,8 +1,5 @@
 package com.practice.metaphor.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import java.time.LocalDateTime;
 
 /**
@@ -12,9 +9,8 @@ import java.time.LocalDateTime;
  * @param name      名稱
  * @param createdAt 建立時間
  */
-@Table("traders")
 public record Trader(
-    @Id Long id,
+    Long id,
     String name,
     LocalDateTime createdAt
 ) {

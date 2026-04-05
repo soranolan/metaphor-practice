@@ -1,8 +1,5 @@
 package com.practice.metaphor.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
 import java.time.LocalDateTime;
 
 /**
@@ -14,9 +11,8 @@ import java.time.LocalDateTime;
  * @param precision 小數點精準度
  * @param createdAt 建立時間
  */
-@Table("assets")
 public record Asset(
-    @Id Long id,
+    Long id,
     String symbol,
     String name,
     Integer precision,
