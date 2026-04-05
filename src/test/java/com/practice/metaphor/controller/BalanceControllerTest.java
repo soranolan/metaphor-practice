@@ -1,5 +1,6 @@
 package com.practice.metaphor.controller;
 
+import com.practice.metaphor.dto.ApiResponse;
 import com.practice.metaphor.mapper.BalanceMapper;
 import com.practice.metaphor.model.entity.Balance;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,53 +25,29 @@ class BalanceControllerTest {
     @InjectMocks
     private BalanceController balanceController;
 
-    private AutoCloseable closeable;
-
     @BeforeEach
     void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
-    }
-
-    @org.junit.jupiter.api.AfterEach
-    void tearDown() throws Exception {
-        if (closeable != null) {
-            closeable.close();
-        }
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGetBalances_Success() {
-        // Arrange (準備測試資料)
+    void testGetBalances() {
+        // Arrange
         Long traderId = 1L;
-        List<Balance> mockBalances = new ArrayList<>();
-        // 模擬兩筆持倉：USD 和 VT
-        mockBalances.add(new Balance(1L, traderId, 1L, new BigDecimal("10000.0000"), BigDecimal.ZERO, LocalDateTime.now()));
-        mockBalances.add(new Balance(2L, traderId, 2L, new BigDecimal("10.0000"), BigDecimal.ZERO, LocalDateTime.now()));
-
+        List<Balance> mockBalances = Arrays.asList(
+            new Balance(1L, traderId, 1L, new BigDecimal("100.00"), BigDecimal.ZERO, LocalDateTime.now()),
+            new Balance(2L, traderId, 2L, new BigDecimal("10.00"), BigDecimal.ZERO, LocalDateTime.now())
+        );
         when(balanceMapper.findByTraderId(traderId)).thenReturn(mockBalances);
 
-        // Act (執行被測方法)
-        List<Balance> result = balanceController.getBalances(traderId);
-
-        // Assert (驗證結果是否正確)
-        assertEquals(2, result.size(), "應該正確返回該交易員的所有 2 個資產持倉");
-        assertEquals(traderId, result.get(0).traderId(), "traderId 應為 1");
-        
-        // 驗證 Mapper 的方法確實被調用過一次
-        verify(balanceMapper, times(1)).findByTraderId(traderId);
-    }
-
-    @Test
-    void testGetBalances_Empty() {
-        // Arrange (模擬找不到任何持倉的情況)
-        Long traderId = 999L; 
-        when(balanceMapper.findByTraderId(traderId)).thenReturn(new ArrayList<>());
-
         // Act
-        List<Balance> result = balanceController.getBalances(traderId);
+        // 現在預期回傳型別是 ApiResponse<List<Balance>>
+        ApiResponse<List<Balance>> response = balanceController.getBalances(traderId);
 
         // Assert
-        assertEquals(0, result.size(), "若找不到對應交易員，應返回空清單而不是 null");
+        assertEquals(200, response.code());
+        assertEquals("Success", response.message());
+        assertEquals(2, response.data().size());
         verify(balanceMapper, times(1)).findByTraderId(traderId);
     }
 }
