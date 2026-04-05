@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practice.metaphor.mapper.MarketMapper">
+
+    <resultMap id="MarketMap" type="com.practice.metaphor.model.entity.Market">
+        <constructor>
+            <idArg column="id" javaType="Long"/>
+            <arg column="base_asset_id" javaType="Long"/>
+            <arg column="quote_asset_id" javaType="Long"/>
+            <arg column="symbol" javaType="String"/>
+            <arg column="status" javaType="int"/>
+        </constructor>
+    </resultMap>
+
+    <select id="findById" resultMap="MarketMap">
+        SELECT
+            id,
+            base_asset_id,
+            quote_asset_id,
+            symbol,
+            status
+        FROM markets
+        WHERE id = #{id}
+    </select>
+
+</mapper>
