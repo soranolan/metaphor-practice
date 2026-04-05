@@ -20,7 +20,8 @@
         </constructor>
     </resultMap>
 
-    <select id="findByTraderIdAndAssetId" resultMap="BalanceMap">
+
+    <select id="findByTraderId" resultMap="BalanceMap">
         SELECT
             id,
             trader_id,
@@ -30,7 +31,6 @@
             updated_at
         FROM balances
         WHERE trader_id = #{traderId}
-          AND asset_id = #{assetId}
     </select>
 
     <select id="findByTraderIdAndAssetIdForUpdate" resultMap="BalanceMap">

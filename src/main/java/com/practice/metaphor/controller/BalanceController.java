@@ -1,5 +1,6 @@
 package com.practice.metaphor.controller;
 
+import com.practice.metaphor.api.BalanceApi;
 import com.practice.metaphor.mapper.BalanceMapper;
 import com.practice.metaphor.model.entity.Balance;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,12 +8,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
- * 餘額查詢介面
+ * 餘額控制器
+ * 實作 BalanceApi 介面，保持程式碼整潔
  */
 @RestController
 @RequestMapping("/api/balances")
-public class BalanceController {
+public class BalanceController implements BalanceApi {
 
     private final BalanceMapper balanceMapper;
 
@@ -20,12 +24,10 @@ public class BalanceController {
         this.balanceMapper = balanceMapper;
     }
 
-    /**
-     * 獲取特定交易員對特定資產的持倉詳情
-     */
-    @GetMapping("/{traderId}/{assetId}")
-    public Balance getBalance(@PathVariable Long traderId, @PathVariable Long assetId) {
-        return balanceMapper.findByTraderIdAndAssetId(traderId, assetId)
-                .orElse(null); // 如果找不到則返回 null (實際上可以丟 404)
+    @Override
+    @GetMapping("/{traderId}")
+    public List<Balance> getBalances(@PathVariable Long traderId) {
+        // 現在改為調用 findByTraderId 來獲取該交易員的所有資產列表
+        return balanceMapper.findByTraderId(traderId);
     }
 }

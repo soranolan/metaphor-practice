@@ -3,6 +3,7 @@ package com.practice.metaphor.controller;
 import com.practice.metaphor.dto.OrderRequest;
 import com.practice.metaphor.service.TradingService;
 import org.springframework.web.bind.annotation.*;
+import com.practice.metaphor.api.TradingApi;
 
 /**
  * 交易控制器

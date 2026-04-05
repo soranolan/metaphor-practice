@@ -1,4 +1,4 @@
-package com.practice.metaphor.controller;
+package com.practice.metaphor.api;
 
 import com.practice.metaphor.dto.OrderRequest;
 import io.swagger.v3.oas.annotations.Operation;

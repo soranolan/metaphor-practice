@@ -4,7 +4,7 @@ import com.practice.metaphor.model.entity.Balance;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Optional;
+
 
 /**
  * 持倉數據訪問層 (MyBatis)
@@ -12,10 +12,9 @@ import java.util.Optional;
 @Mapper
 public interface BalanceMapper {
     /**
-     * 查詢特定交易員的特定資產餘額
+     * 查詢特定交易員的所有資產餘額列表
      */
-    Optional<Balance> findByTraderIdAndAssetId(@Param("traderId") Long traderId, 
-                                              @Param("assetId") Long assetId);
+    java.util.List<Balance> findByTraderId(@Param("traderId") Long traderId);
 
     /**
      * 加鎖查詢餘額 (SELECT FOR UPDATE)
