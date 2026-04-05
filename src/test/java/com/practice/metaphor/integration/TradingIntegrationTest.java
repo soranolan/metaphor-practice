@@ -60,4 +60,52 @@ class TradingIntegrationTest {
         Balance bobVt = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 2L);
         assertTrue(new BigDecimal("95.0000").compareTo(bobVt.availableAmount()) == 0, "Bob 的 VT 庫存應該剩下 95 股");
     }
+
+    @Test
+    void testMarketChaos_ConservationLaw() throws Exception {
+        // --- 1. 準備隨機性因子 ---
+        java.util.Random random = new java.util.Random();
+        int taskCount = 100; // 模擬總單量
+        java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(10);
+        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(taskCount);
+
+        // --- 2. 開始混沌下單模式 ---
+        for (int i = 0; i < taskCount; i++) {
+            executor.submit(() -> {
+                try {
+                    Long traderId = (long) (random.nextInt(10) + 1); // 1~10
+                    int side = random.nextInt(2); // 0:Buy, 1:Sell
+                    // 價格在 95~105 之間隨機震盪
+                    BigDecimal price = new BigDecimal(95 + random.nextInt(11)); 
+                    BigDecimal qty = new BigDecimal(random.nextInt(5) + 1); // 1~5 股
+
+                    tradingService.placeOrder(traderId, 1L, side, price, qty);
+                } catch (Exception e) {
+                    System.err.println("下單異常: " + e.getMessage());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        executor.shutdown();
+
+        // --- 3. 驗證資產守恆 (Asset Conservation Law) ---
+        // 初始 USD: 10 * 10,000,000 = 100,000,000
+        // 初始 VT:  10 * 1,000 = 10,000
+        BigDecimal totalUsd = BigDecimal.ZERO;
+        BigDecimal totalVt = BigDecimal.ZERO;
+
+        for (long id = 1; id <= 10; id++) {
+            Balance usdBal = balanceMapper.findByTraderIdAndAssetIdForUpdate(id, 1L);
+            Balance vtBal = balanceMapper.findByTraderIdAndAssetIdForUpdate(id, 2L);
+            
+            totalUsd = totalUsd.add(usdBal.availableAmount()).add(usdBal.frozenAmount());
+            totalVt = totalVt.add(vtBal.availableAmount()).add(vtBal.frozenAmount());
+        }
+
+        assertTrue(new BigDecimal("100000000.0000").compareTo(totalUsd) == 0, "USD 總合不守恆！目前: " + totalUsd);
+        assertTrue(new BigDecimal("10000.0000").compareTo(totalVt) == 0, "VT 總合不守恆！目前: " + totalVt);
+    }
 }
