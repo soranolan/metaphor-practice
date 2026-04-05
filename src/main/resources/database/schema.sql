@@ -13,7 +13,7 @@ CREATE TABLE traders (
 -- 2. 資產定義表 (所有的貨幣、股票、代幣都在這裡定義)
 CREATE TABLE assets (
     id SERIAL PRIMARY KEY,                                   -- 資產唯一 ID
-    symbol VARCHAR(20) NOT NULL UNIQUE,                      -- 資產代碼 (如: USD, TSM)
+    symbol VARCHAR(20) NOT NULL UNIQUE,                      -- 資產代碼 (如: VT, USD)
     name VARCHAR(100),                                       -- 資產全稱 (如: US Dollar)
     precision INT NOT NULL DEFAULT 4,                        -- 小數點位數
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP  -- 建立時間
@@ -34,7 +34,7 @@ CREATE TABLE balances (
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,                                   -- 委託單唯一 ID
     trader_id INT NOT NULL,                                  -- 下單的交易員 ID
-    base_asset_id INT NOT NULL,                              -- 交易對標的資產 ID (如 TSM)
+    base_asset_id INT NOT NULL,                              -- 交易對標的資產 ID (如 VT)
     quote_asset_id INT NOT NULL,                             -- 計價貨幣資產 ID (如 USD)
     side INT NOT NULL,                                       -- 交易方向：0: 買入 (BUY), 1: 賣出 (SELL)
     price DECIMAL(19, 4) NOT NULL,                           -- 掛單價格
