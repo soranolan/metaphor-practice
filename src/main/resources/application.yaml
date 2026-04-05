@@ -1,16 +1,5 @@
+# 故意不設定 'spring.profiles.active'，
+# 強制開發者啟動時必須手動指定環境變數 (例如：-Dspring.profiles.active=dev)
 spring:
   application:
     name: metaphor-practice
-  datasource:
-    url: jdbc:postgresql://localhost:5432/metaphor
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:database/schema.sql
-      data-locations: classpath:database/data.sql
-
-mybatis:
-  mapper-locations: classpath:mapper/*.xml
