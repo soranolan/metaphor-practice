@@ -1,4 +1,4 @@
-package com.practice.metaphor.model;
+package com.practice.metaphor.model.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

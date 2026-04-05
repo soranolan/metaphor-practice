@@ -1,4 +1,4 @@
-package com.practice.metaphor.model;
+package com.practice.metaphor.model.entity;
 
 import java.time.LocalDateTime;
 
