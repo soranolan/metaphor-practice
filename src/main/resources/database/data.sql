@@ -10,6 +10,9 @@ INSERT INTO traders (id, name) VALUES (2, 'Bob');
 INSERT INTO balances (trader_id, asset_id, available_amount, frozen_amount) VALUES (1, 1, 10000.0000, 0.0000);
 INSERT INTO balances (trader_id, asset_id, available_amount, frozen_amount) VALUES (2, 1, 10000.0000, 0.0000);
 
--- (可選) 給他們一點 VT 庫存，不然等一下沒辦法做賣單實驗
+-- 4. 給他們一點 VT 庫存，不然等一下沒辦法做賣單實驗
 INSERT INTO balances (trader_id, asset_id, available_amount) VALUES (1, 2, 10.0000);
 INSERT INTO balances (trader_id, asset_id, available_amount) VALUES (2, 2, 10.0000);
+
+-- 5. 初始化官方交易市場
+INSERT INTO markets (id, base_asset_id, quote_asset_id, symbol) VALUES (1, 2, 1, 'VT/USD');

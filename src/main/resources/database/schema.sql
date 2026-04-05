@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS balances;
+DROP TABLE IF EXISTS markets;
 DROP TABLE IF EXISTS assets;
 DROP TABLE IF EXISTS traders;
 
@@ -17,6 +18,18 @@ CREATE TABLE assets (
     name VARCHAR(100),                                       -- 資產全稱 (如: US Dollar)
     precision INT NOT NULL DEFAULT 4,                        -- 小數點位數
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP  -- 建立時間
+);
+
+-- 3. 交易市場表 (Market / Trading Pairs)
+-- 定義哪些資產可以互相交易，並分配標的 (Base) 與計價物 (Quote)
+CREATE TABLE markets (
+    id SERIAL PRIMARY KEY,                                   -- 市場唯一 ID
+    base_asset_id INT NOT NULL,                              -- 標的資產 ID (例如 VT)
+    quote_asset_id INT NOT NULL,                             -- 計價資產 ID (例如 USD)
+    symbol VARCHAR(40) NOT NULL UNIQUE,                      -- 市場代號 (例如: VT/USD)
+    status INT NOT NULL DEFAULT 1,                           -- 狀態：0: 暫停, 1: 正常交易
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 最後更新時間
+    UNIQUE(base_asset_id, quote_asset_id)                    -- 同樣的資產組合只能建立一個市場
 );
 
 -- 3. 客戶持倉表 (最終事實表)
