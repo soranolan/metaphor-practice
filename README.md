@@ -1,4 +1,6 @@
-[![Java CI with Gradle](https://github.com/soranolan/metaphor-practice/actions/workflows/gradle.yml/badge.svg)](https://github.com/soranolan/metaphor-practice/actions/workflows/gradle.yml)
+[![Gradle CI](https://github.com/soranolan/metaphor-practice/actions/workflows/gradle.yml/badge.svg)](https://github.com/soranolan/metaphor-practice/actions/workflows/gradle.yml)
+
+[![CodeQL](https://github.com/soranolan/metaphor-practice/actions/workflows/codeql.yml/badge.svg)](https://github.com/soranolan/metaphor-practice/actions/workflows/codeql.yml)
 
 # Metaphor Practice
 
