@@ -1,8 +1,8 @@
 package com.practice.metaphor.v1.integration;
 
-import com.practice.metaphor.v1.mapper.BalanceMapper;
-import com.practice.metaphor.v1.model.entity.Balance;
-import com.practice.metaphor.v1.service.TradingService;
+import com.practice.metaphor.v1.mapper.BalanceMapperV1;
+import com.practice.metaphor.v1.model.entity.BalanceV1;
+import com.practice.metaphor.v1.service.TradingServiceV1;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("test") // 使用 H2 資料庫設定
 @Transactional // 測試完自動 Rollback，保持資料庫乾淨
 @org.springframework.test.annotation.DirtiesContext(classMode = org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class TradingIntegrationTest {
+class TradingIntegrationTestV1 {
 
     @Autowired
-    private TradingService tradingService;
+    private TradingServiceV1 tradingService;
 
     @Autowired
-    private BalanceMapper balanceMapper;
+    private BalanceMapperV1 balanceMapper;
 
     @Test
     void testAliceBuyBobSell_WithPriceImprovement() {
@@ -48,24 +48,24 @@ class TradingIntegrationTest {
 
         // --- 4. 驗證 Alice (買家) 的最終餘額變化 ---
         // Alice 花了 500 USD 去買，就算一開始用 110 掛單，也會退回溢價
-        Balance finalAliceUsd = balanceMapper.findByTraderIdAndAssetIdForUpdate(1L, 1L);
+        BalanceV1 finalAliceUsd = balanceMapper.findByTraderIdAndAssetIdForUpdate(1L, 1L);
         BigDecimal expectedAliceUsd = initialAliceUsd.subtract(new BigDecimal("500.0000"));
         org.junit.jupiter.api.Assertions.assertEquals(0, expectedAliceUsd.compareTo(finalAliceUsd.availableAmount()), "Alice 成交後可用餘額不正確");
         assertTrue(new BigDecimal("0.0000").compareTo(finalAliceUsd.frozenAmount()) == 0, "Alice 應該沒有殘留的凍結金");
 
         // Alice 預期拿到 5 股 VT
-        Balance finalAliceVt = balanceMapper.findByTraderIdAndAssetIdForUpdate(1L, 2L);
+        BalanceV1 finalAliceVt = balanceMapper.findByTraderIdAndAssetIdForUpdate(1L, 2L);
         BigDecimal expectedAliceVt = initialAliceVt.add(new BigDecimal("5.0000"));
         assertTrue(expectedAliceVt.compareTo(finalAliceVt.availableAmount()) == 0, "Alice 應該多拿到 5 股 VT");
 
         // --- 5. 驗證 Bob (賣家) 的最終餘額變化 ---
         // Bob 拿到了 500 USD
-        Balance finalBobUsd = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 1L);
+        BalanceV1 finalBobUsd = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 1L);
         BigDecimal expectedBobUsd = initialBobUsd.add(new BigDecimal("500.0000"));
         assertTrue(expectedBobUsd.compareTo(finalBobUsd.availableAmount()) == 0, "Bob 應該多拿到 500 USD");
         
         // Bob 賣出了 5 股 VT
-        Balance finalBobVt = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 2L);
+        BalanceV1 finalBobVt = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 2L);
         BigDecimal expectedBobVt = initialBobVt.subtract(new BigDecimal("5.0000"));
         assertTrue(expectedBobVt.compareTo(finalBobVt.availableAmount()) == 0, "Bob 的 VT 庫存應該少了 5 股");
     }
@@ -100,15 +100,15 @@ class TradingIntegrationTest {
         latch.await();
         executor.shutdown();
 
-        // --- 3. 驗證資產守恆 (Asset Conservation Law) ---
+        // --- 3. 驗證資產守恆 (AssetV1 Conservation Law) ---
         // 初始 USD: 10 * 10,000,000 = 100,000,000
         // 初始 VT:  10 * 1,000 = 10,000
         BigDecimal totalUsd = BigDecimal.ZERO;
         BigDecimal totalVt = BigDecimal.ZERO;
 
         for (long id = 1; id <= 10; id++) {
-            Balance usdBal = balanceMapper.findByTraderIdAndAssetIdForUpdate(id, 1L);
-            Balance vtBal = balanceMapper.findByTraderIdAndAssetIdForUpdate(id, 2L);
+            BalanceV1 usdBal = balanceMapper.findByTraderIdAndAssetIdForUpdate(id, 1L);
+            BalanceV1 vtBal = balanceMapper.findByTraderIdAndAssetIdForUpdate(id, 2L);
             
             totalUsd = totalUsd.add(usdBal.availableAmount()).add(usdBal.frozenAmount());
             totalVt = totalVt.add(vtBal.availableAmount()).add(vtBal.frozenAmount());

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * 修復資產保護結構：移除個別資產 ID，改用交易市場 marketId
  */
 @Schema(description = "下單請求資訊 (基於市場 ID)")
-public record OrderRequest(
+public record OrderRequestV1(
         @Schema(description = "交易員 ID", example = "1") Long traderId,
 
         @Schema(description = "交易市場 ID (如 VT/USD 市場)", example = "101") Long marketId,

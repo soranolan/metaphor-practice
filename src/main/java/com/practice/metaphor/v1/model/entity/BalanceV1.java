@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @param frozenAmount    凍結餘額 (掛單中)
  * @param updatedAt       更新時間
  */
-public record Balance(
+public record BalanceV1(
     Long id,
     Long traderId,
     Long assetId,

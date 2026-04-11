@@ -1,6 +1,6 @@
 package com.practice.metaphor.v1.mapper;
 
-import com.practice.metaphor.v1.model.entity.Order;
+import com.practice.metaphor.v1.model.entity.OrderV1;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -11,17 +11,17 @@ import java.util.List;
  * 委託單映射介面 (MyBatis)
  */
 @Mapper
-public interface OrderMapper {
+public interface OrderMapperV1 {
 
     /**
      * 建立一筆新委託單
      */
-    int insert(Order order);
+    int insert(OrderV1 order);
 
     /**
      * 查詢特定的委託單 (含加鎖)
      */
-    Order findByIdForUpdate(@Param("id") Long id);
+    OrderV1 findByIdForUpdate(@Param("id") Long id);
 
     /**
      * 尋找可成交的對手單 (Makers)
@@ -32,7 +32,7 @@ public interface OrderMapper {
      * @param price        價格門檻 (買單 = price越高越好, 賣單 = price越低越好)
      * @return 合適的掛單列表 (按價格優先、時間優先排序)
      */
-    List<Order> findMakers(
+    List<OrderV1> findMakers(
         @Param("baseAssetId") Long baseAssetId,
         @Param("quoteAssetId") Long quoteAssetId,
         @Param("side") int side,

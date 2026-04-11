@@ -1,12 +1,12 @@
 package com.practice.metaphor.v1.service;
 
-import com.practice.metaphor.v1.exception.BusinessException;
-import com.practice.metaphor.v1.mapper.BalanceMapper;
-import com.practice.metaphor.v1.mapper.MarketMapper;
-import com.practice.metaphor.v1.mapper.OrderMapper;
-import com.practice.metaphor.v1.model.entity.Market;
-import com.practice.metaphor.v1.model.entity.Balance;
-import com.practice.metaphor.v1.model.entity.Order;
+import com.practice.metaphor.v1.exception.BusinessExceptionV1;
+import com.practice.metaphor.v1.mapper.BalanceMapperV1;
+import com.practice.metaphor.v1.mapper.MarketMapperV1;
+import com.practice.metaphor.v1.mapper.OrderMapperV1;
+import com.practice.metaphor.v1.model.entity.MarketV1;
+import com.practice.metaphor.v1.model.entity.BalanceV1;
+import com.practice.metaphor.v1.model.entity.OrderV1;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +17,14 @@ import java.time.LocalDateTime;
  * 交易服務核心
  */
 @Service
-public class TradingService {
+public class TradingServiceV1 {
 
-    private final BalanceMapper balanceMapper;
-    private final OrderMapper orderMapper;
-    private final MarketMapper marketMapper;
-    private final MatchingService matchingService; // 新增：撮合引擎
+    private final BalanceMapperV1 balanceMapper;
+    private final OrderMapperV1 orderMapper;
+    private final MarketMapperV1 marketMapper;
+    private final MatchingServiceV1 matchingService; // 新增：撮合引擎
 
-    public TradingService(BalanceMapper balanceMapper, OrderMapper orderMapper, MarketMapper marketMapper, MatchingService matchingService) {
+    public TradingServiceV1(BalanceMapperV1 balanceMapper, OrderMapperV1 orderMapper, MarketMapperV1 marketMapper, MatchingServiceV1 matchingService) {
         this.balanceMapper = balanceMapper;
         this.orderMapper = orderMapper;
         this.marketMapper = marketMapper;
@@ -38,8 +38,8 @@ public class TradingService {
     public void placeOrder(Long traderId, Long marketId, int side, BigDecimal price, BigDecimal qty) {
         
         // 1. 查詢市場規則
-        Market market = marketMapper.findById(marketId)
-                .orElseThrow(() -> new BusinessException("【交易失敗】市場不存在"));
+        MarketV1 market = marketMapper.findById(marketId)
+                .orElseThrow(() -> new BusinessExceptionV1("【交易失敗】市場不存在"));
 
         Long baseAssetId = market.baseAssetId();
         Long quoteAssetId = market.quoteAssetId();
@@ -49,10 +49,10 @@ public class TradingService {
         BigDecimal amountToLock = (side == 0) ? price.multiply(qty) : qty;
 
         // 3. 獲取餘額並加鎖
-        Balance balance = balanceMapper.findByTraderIdAndAssetIdForUpdate(traderId, assetToLock);
+        BalanceV1 balance = balanceMapper.findByTraderIdAndAssetIdForUpdate(traderId, assetToLock);
         
         if (balance == null || balance.availableAmount().compareTo(amountToLock) < 0) {
-            throw new BusinessException("【交易失敗】餘額不足");
+            throw new BusinessExceptionV1("【交易失敗】餘額不足");
         }
 
         // 4. 更新可用與凍結金額 (資產凍結)
@@ -61,7 +61,7 @@ public class TradingService {
         balanceMapper.updateBalance(traderId, assetToLock, newAvailable, newFrozen);
 
         // 5. 建立委託單紀錄
-        Order order = new Order(
+        OrderV1 order = new OrderV1(
                 null, 
                 traderId,
                 baseAssetId,

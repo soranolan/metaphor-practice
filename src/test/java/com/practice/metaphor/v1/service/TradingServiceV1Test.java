@@ -1,11 +1,11 @@
 package com.practice.metaphor.v1.service;
 
-import com.practice.metaphor.v1.mapper.BalanceMapper;
-import com.practice.metaphor.v1.mapper.MarketMapper;
-import com.practice.metaphor.v1.mapper.OrderMapper;
-import com.practice.metaphor.v1.model.entity.Market;
-import com.practice.metaphor.v1.model.entity.Balance;
-import com.practice.metaphor.v1.model.entity.Order;
+import com.practice.metaphor.v1.mapper.BalanceMapperV1;
+import com.practice.metaphor.v1.mapper.MarketMapperV1;
+import com.practice.metaphor.v1.mapper.OrderMapperV1;
+import com.practice.metaphor.v1.model.entity.MarketV1;
+import com.practice.metaphor.v1.model.entity.BalanceV1;
+import com.practice.metaphor.v1.model.entity.OrderV1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,22 +22,22 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
-class TradingServiceTest {
+class TradingServiceV1Test {
 
     @Mock
-    private BalanceMapper balanceMapper;
+    private BalanceMapperV1 balanceMapper;
 
     @Mock
-    private OrderMapper orderMapper;
+    private OrderMapperV1 orderMapper;
 
     @Mock
-    private MarketMapper marketMapper; // 新增：模擬市場規則查詢
+    private MarketMapperV1 marketMapper; // 新增：模擬市場規則查詢
 
     @Mock
-    private MatchingService matchingService; // 修復 NPE
+    private MatchingServiceV1 matchingService; // 修復 NPE
 
     @InjectMocks
-    private TradingService tradingService;
+    private TradingServiceV1 tradingService;
 
     private AutoCloseable closeable;
 
@@ -62,12 +62,12 @@ class TradingServiceTest {
         BigDecimal qty = new BigDecimal("2.0000");
         int sideInt = 0; // BUY
 
-        // 模擬市場規則：Market 101 = Base(2:VT), Quote(1:USD)
-        Market mockMarket = new Market(marketId, 2L, 1L, "VT/USD", 1);
+        // 模擬市場規則：MarketV1 101 = Base(2:VT), Quote(1:USD)
+        MarketV1 mockMarket = new MarketV1(marketId, 2L, 1L, "VT/USD", 1);
         when(marketMapper.findById(marketId)).thenReturn(Optional.of(mockMarket));
 
         // 模擬買入時需要 200 USD 的餘額
-        Balance mockBalance = new Balance(1L, traderId, 1L, new BigDecimal("1000.0000"), BigDecimal.ZERO, LocalDateTime.now());
+        BalanceV1 mockBalance = new BalanceV1(1L, traderId, 1L, new BigDecimal("1000.0000"), BigDecimal.ZERO, LocalDateTime.now());
         when(balanceMapper.findByTraderIdAndAssetIdForUpdate(traderId, 1L)).thenReturn(mockBalance);
 
         // Act
@@ -75,13 +75,13 @@ class TradingServiceTest {
         tradingService.placeOrder(traderId, marketId, sideInt, price, qty);
 
         // Assert
-        // 驗證是否正確鎖定了 Quote Asset (1:USD)
+        // 驗證是否正確鎖定了 Quote AssetV1 (1:USD)
         verify(balanceMapper, times(1)).updateBalance(
                 eq(traderId), eq(1L), 
                 argThat(val -> val.compareTo(new BigDecimal("800")) == 0),
                 argThat(val -> val.compareTo(new BigDecimal("200")) == 0)
         );
-        verify(orderMapper, times(1)).insert(any(Order.class));
+        verify(orderMapper, times(1)).insert(any(OrderV1.class));
     }
 
     @Test

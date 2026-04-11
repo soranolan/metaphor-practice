@@ -1,7 +1,7 @@
 package com.practice.metaphor.v1.api;
 
-import com.practice.metaphor.v1.dto.ApiResponse;
-import com.practice.metaphor.v1.dto.OrderRequest;
+import com.practice.metaphor.v1.dto.ApiResponseV1;
+import com.practice.metaphor.v1.dto.OrderRequestV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * 交易 API 規範介面
  */
 @Tag(name = "交易管理", description = "處理訂單委託、撮合與交易相關操作")
-public interface TradingApi {
+public interface TradingApiV1 {
 
     @Operation(
         summary = "提交新委託單",
@@ -21,5 +21,5 @@ public interface TradingApi {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "委託單已受理，資金已凍結"),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "無效的請求參數或業務邏輯錯誤（如餘額不足）")
     })
-    ApiResponse<String> placeOrder(@RequestBody OrderRequest request);
+    ApiResponseV1<String> placeOrder(@RequestBody OrderRequestV1 request);
 }

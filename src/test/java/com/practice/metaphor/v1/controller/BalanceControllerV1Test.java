@@ -1,8 +1,8 @@
 package com.practice.metaphor.v1.controller;
 
-import com.practice.metaphor.v1.dto.ApiResponse;
-import com.practice.metaphor.v1.mapper.BalanceMapper;
-import com.practice.metaphor.v1.model.entity.Balance;
+import com.practice.metaphor.v1.dto.ApiResponseV1;
+import com.practice.metaphor.v1.mapper.BalanceMapperV1;
+import com.practice.metaphor.v1.model.entity.BalanceV1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,13 +17,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class BalanceControllerTest {
+class BalanceControllerV1Test {
 
     @Mock
-    private BalanceMapper balanceMapper;
+    private BalanceMapperV1 balanceMapper;
 
     @InjectMocks
-    private BalanceController balanceController;
+    private BalanceControllerV1 balanceController;
 
     @BeforeEach
     void setUp() {
@@ -34,15 +34,15 @@ class BalanceControllerTest {
     void testGetBalances() {
         // Arrange
         Long traderId = 1L;
-        List<Balance> mockBalances = Arrays.asList(
-            new Balance(1L, traderId, 1L, new BigDecimal("100.00"), BigDecimal.ZERO, LocalDateTime.now()),
-            new Balance(2L, traderId, 2L, new BigDecimal("10.00"), BigDecimal.ZERO, LocalDateTime.now())
+        List<BalanceV1> mockBalances = Arrays.asList(
+            new BalanceV1(1L, traderId, 1L, new BigDecimal("100.00"), BigDecimal.ZERO, LocalDateTime.now()),
+            new BalanceV1(2L, traderId, 2L, new BigDecimal("10.00"), BigDecimal.ZERO, LocalDateTime.now())
         );
         when(balanceMapper.findByTraderId(traderId)).thenReturn(mockBalances);
 
         // Act
-        // 現在預期回傳型別是 ApiResponse<List<Balance>>
-        ApiResponse<List<Balance>> response = balanceController.getBalances(traderId);
+        // 現在預期回傳型別是 ApiResponseV1<List<BalanceV1>>
+        ApiResponseV1<List<BalanceV1>> response = balanceController.getBalances(traderId);
 
         // Assert
         assertEquals(200, response.code());

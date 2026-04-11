@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * 改回普通 Class 之理由：MyBatis 的 useGeneratedKeys 需要透過 setter 回填 ID，
  * 且訂單在撮合過程中會頻繁更新成交量與狀態，Class 比 Record 更靈活。
  */
-public class Order {
+public class OrderV1 {
     private Long id;
     private Long traderId;
     private Long baseAssetId;
@@ -21,9 +21,9 @@ public class Order {
     private LocalDateTime createdAt;
 
     // 給 MyBatis 使用的無參建構子
-    public Order() {}
+    public OrderV1() {}
 
-    public Order(Long id, Long traderId, Long baseAssetId, Long quoteAssetId, int side, 
+    public OrderV1(Long id, Long traderId, Long baseAssetId, Long quoteAssetId, int side, 
                  BigDecimal price, BigDecimal totalQty, BigDecimal filledQty, 
                  int status, LocalDateTime createdAt) {
         this.id = id;

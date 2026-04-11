@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.practice.metaphor.v1.mapper")
+@MapperScan("com.practice.metaphor.*.mapper")
 public class MetaphorPracticeApplication {
 
 	public static void main(String[] args) {
