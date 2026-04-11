@@ -1,0 +1,9 @@
+# Basic `dependabot.yml` file with
+# minimum configuration for three package managers
+
+version: 1
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
