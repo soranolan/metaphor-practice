@@ -1,3 +1,5 @@
+[![Java CI with Gradle](https://github.com/soranolan/metaphor-practice/actions/workflows/gradle.yml/badge.svg)](https://github.com/soranolan/metaphor-practice/actions/workflows/gradle.yml)
+
 # Metaphor Practice
 
 這是個用於自我練習的 Spring Boot 專案。
