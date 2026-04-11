@@ -4,6 +4,9 @@ import com.practice.metaphor.v1.model.entity.BalanceV1;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 
 
 /**
@@ -12,9 +15,14 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface BalanceMapperV1 {
     /**
+     * 查詢所有交易員的所有資產餘額列表
+     */
+    List<BalanceV1> findAll();
+
+    /**
      * 查詢特定交易員的所有資產餘額列表
      */
-    java.util.List<BalanceV1> findByTraderId(@Param("traderId") Long traderId);
+    List<BalanceV1> findByTraderId(@Param("traderId") Long traderId);
 
     /**
      * 加鎖查詢餘額 (SELECT FOR UPDATE)
@@ -37,6 +45,6 @@ public interface BalanceMapperV1 {
      */
     int updateBalance(@Param("traderId") Long traderId, 
                       @Param("assetId") Long assetId, 
-                      @Param("availableAmount") java.math.BigDecimal availableAmount, 
-                      @Param("frozenAmount") java.math.BigDecimal frozenAmount);
+                      @Param("availableAmount") BigDecimal availableAmount, 
+                      @Param("frozenAmount") BigDecimal frozenAmount);
 }

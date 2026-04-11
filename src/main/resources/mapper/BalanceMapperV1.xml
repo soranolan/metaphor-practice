@@ -21,6 +21,17 @@
     </resultMap>
 
 
+    <select id="findAll" resultMap="BalanceMap">
+        SELECT
+            id,
+            trader_id,
+            asset_id,
+            available_amount,
+            frozen_amount,
+            updated_at
+        FROM balances
+    </select>
+    
     <select id="findByTraderId" resultMap="BalanceMap">
         SELECT
             id,

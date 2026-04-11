@@ -1,6 +1,7 @@
 package com.practice.metaphor.v1.api;
 
 import com.practice.metaphor.v1.dto.ApiResponseV1;
+import com.practice.metaphor.v1.dto.TraderBalancesV1;
 import com.practice.metaphor.v1.model.entity.BalanceV1;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,4 +23,8 @@ public interface BalanceApiV1 {
         @Parameter(description = "交易員 ID", example = "1")
         @PathVariable("traderId") Long traderId
     );
+
+    @Operation(summary = "查詢所有交易員的資產持倉", description = "獲取系統內所有交易員名下的資產持倉清單，並依交易員 ID 進行分類分組")
+    @GetMapping
+    ApiResponseV1<List<TraderBalancesV1>> getAllBalances();
 }
