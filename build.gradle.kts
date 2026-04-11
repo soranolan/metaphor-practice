@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath("org.apache.commons:commons-lang3:3.18.0")
+        classpath("tools.jackson.core:jackson-core:3.1.1")
     }
 }
 
