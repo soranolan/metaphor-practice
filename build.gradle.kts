@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.apache.commons:commons-lang3:3.18.0")
+    }
+}
+
 plugins {
 	java
 	id("org.springframework.boot") version "4.0.5"
@@ -6,6 +15,11 @@ plugins {
 
 group = "com.practice"
 version = "0.0.1-SNAPSHOT"
+
+// override tomcat version to fix CVE
+extra["tomcat.version"] = "11.0.21"
+// override jackson-bom version to fix CVE
+extra["jackson-bom.version"] = "3.1.1"
 
 java {
 	toolchain {
