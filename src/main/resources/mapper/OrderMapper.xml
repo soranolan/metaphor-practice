@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.practice.metaphor.mapper.OrderMapper">
+<mapper namespace="com.practice.metaphor.v1.mapper.OrderMapper">
 
-    <resultMap id="OrderMap" type="com.practice.metaphor.model.entity.Order">
+    <resultMap id="OrderMap" type="com.practice.metaphor.v1.model.entity.Order">
         <id property="id" column="id"/>
         <result property="traderId" column="trader_id"/>
         <result property="baseAssetId" column="base_asset_id"/>

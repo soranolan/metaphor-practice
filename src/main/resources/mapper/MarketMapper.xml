@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.practice.metaphor.mapper.MarketMapper">
+<mapper namespace="com.practice.metaphor.v1.mapper.MarketMapper">
 
-    <resultMap id="MarketMap" type="com.practice.metaphor.model.entity.Market">
+    <resultMap id="MarketMap" type="com.practice.metaphor.v1.model.entity.Market">
         <constructor>
             <idArg column="id" javaType="Long"/>
             <arg column="base_asset_id" javaType="Long"/>

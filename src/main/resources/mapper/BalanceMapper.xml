@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.practice.metaphor.mapper.BalanceMapper">
+<mapper namespace="com.practice.metaphor.v1.mapper.BalanceMapper">
 
     <!-- 
         【Positional Strictly 版 ResultMap】 
         適用於 Java Record: 透過「型別 (javaType)」與「位置 (index-order)」精確對比建構子參數。
         這是當編譯器參數名稱 (-parameters) 因環境因素無法讀取時，最穩定的映射方式。
     -->
-    <resultMap id="BalanceMap" type="com.practice.metaphor.model.entity.Balance">
+    <resultMap id="BalanceMap" type="com.practice.metaphor.v1.model.entity.Balance">
         <constructor>
             <idArg column="id" javaType="Long"/>
             <arg column="trader_id" javaType="Long"/>
