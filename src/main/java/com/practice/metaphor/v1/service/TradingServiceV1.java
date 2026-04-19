@@ -35,7 +35,7 @@ public class TradingServiceV1 {
      * 點擊委託下單 (基於市場 ID)
      */
     @Transactional
-    public void placeOrder(Long traderId, Long marketId, int side, BigDecimal price, BigDecimal qty) {
+    public void placeOrder(Long traderId, Long marketId, Integer type, int side, BigDecimal price, BigDecimal qty) {
         
         // 1. 查詢市場規則
         MarketV1 market = marketMapper.findById(marketId)
@@ -66,6 +66,7 @@ public class TradingServiceV1 {
                 traderId,
                 baseAssetId,
                 quoteAssetId,
+                type != null ? type : 0,
                 side,
                 price,
                 qty,

@@ -49,8 +49,9 @@ CREATE TABLE orders (
     trader_id BIGINT NOT NULL,                               -- 下單的交易員 ID
     base_asset_id BIGINT NOT NULL,                           -- 交易對標的資產 ID (如 VT)
     quote_asset_id BIGINT NOT NULL,                          -- 計價貨幣資產 ID (如 USD)
+    order_type INT NOT NULL DEFAULT 0,                       -- 訂單類型：0: 限價單 (LIMIT), 1: 市價單 (MARKET)
     side INT NOT NULL,                                       -- 交易方向：0: 買入 (BUY), 1: 賣出 (SELL)
-    price DECIMAL(19, 4) NOT NULL,                           -- 掛單價格
+    price DECIMAL(19, 4),                                    -- 掛單價格 (市價單可為 null)
     total_qty DECIMAL(19, 4) NOT NULL,                       -- 委託總數量
     filled_qty DECIMAL(19, 4) NOT NULL DEFAULT 0,            -- 已成交數量
     status INT NOT NULL DEFAULT 0,                           -- 狀態：0: 新委託, 1: 部分成交, 2: 完全成交, 3: 已撤單

@@ -13,6 +13,7 @@ public class OrderV1 {
     private Long traderId;
     private Long baseAssetId;
     private Long quoteAssetId;
+    private int type;
     private int side;
     private BigDecimal price;
     private BigDecimal totalQty;
@@ -23,13 +24,14 @@ public class OrderV1 {
     // 給 MyBatis 使用的無參建構子
     public OrderV1() {}
 
-    public OrderV1(Long id, Long traderId, Long baseAssetId, Long quoteAssetId, int side, 
+    public OrderV1(Long id, Long traderId, Long baseAssetId, Long quoteAssetId, int type, int side, 
                  BigDecimal price, BigDecimal totalQty, BigDecimal filledQty, 
                  int status, LocalDateTime createdAt) {
         this.id = id;
         this.traderId = traderId;
         this.baseAssetId = baseAssetId;
         this.quoteAssetId = quoteAssetId;
+        this.type = type;
         this.side = side;
         this.price = price;
         this.totalQty = totalQty;
@@ -50,6 +52,9 @@ public class OrderV1 {
 
     public Long getQuoteAssetId() { return quoteAssetId; }
     public void setQuoteAssetId(Long quoteAssetId) { this.quoteAssetId = quoteAssetId; }
+
+    public int getType() { return type; }
+    public void setType(int type) { this.type = type; }
 
     public int getSide() { return side; }
     public void setSide(int side) { this.side = side; }

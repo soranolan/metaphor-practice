@@ -9,6 +9,7 @@
         <result property="traderId" column="trader_id"/>
         <result property="baseAssetId" column="base_asset_id"/>
         <result property="quoteAssetId" column="quote_asset_id"/>
+        <result property="type" column="order_type"/>
         <result property="side" column="side"/>
         <result property="price" column="price"/>
         <result property="totalQty" column="total_qty"/>
@@ -19,9 +20,9 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO
-            orders (trader_id, base_asset_id, quote_asset_id, side, price, total_qty, filled_qty, status)
+            orders (trader_id, base_asset_id, quote_asset_id, order_type, side, price, total_qty, filled_qty, status)
         VALUES
-            (#{traderId}, #{baseAssetId}, #{quoteAssetId}, #{side}, #{price}, #{totalQty}, #{filledQty}, #{status})
+            (#{traderId}, #{baseAssetId}, #{quoteAssetId}, #{type}, #{side}, #{price}, #{totalQty}, #{filledQty}, #{status})
     </insert>
 
     <select id="findByIdForUpdate" resultMap="OrderMap">
@@ -30,6 +31,7 @@
             trader_id,
             base_asset_id,
             quote_asset_id,
+            order_type,
             side,
             price,
             total_qty,
@@ -50,6 +52,7 @@
             trader_id,
             base_asset_id,
             quote_asset_id,
+            order_type,
             side,
             price,
             total_qty,

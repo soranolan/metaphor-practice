@@ -14,6 +14,8 @@ public record OrderRequestV1(
         @Schema(description = "交易市場 ID (如 VT/USD 市場)", example = "101") Long marketId,
 
         @Schema(description = "交易方向 (0: 買入, 1: 賣出)", example = "0") int side,
+        
+        @Schema(description = "訂單類型 (0: 限價單, 1: 市價單)", example = "0") Integer type,
 
         @Schema(description = "委託價格", example = "500.00") BigDecimal price,
 

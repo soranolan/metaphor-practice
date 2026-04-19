@@ -29,6 +29,7 @@ public class TradingControllerV1 implements TradingApiV1 {
         tradingService.placeOrder(
                 request.traderId(),
                 request.marketId(),
+                request.type() != null ? request.type() : 0, // Fallback to Limit
                 request.side(),
                 request.price(),
                 request.totalQty()

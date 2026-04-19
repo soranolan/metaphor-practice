@@ -72,7 +72,7 @@ class TradingServiceV1Test {
 
         // Act
         // 注意：這裡現在只傳入 marketId，而不是兩個資產 ID 了 (這會導致編譯失敗)
-        tradingService.placeOrder(traderId, marketId, sideInt, price, qty);
+        tradingService.placeOrder(traderId, marketId, 0, sideInt, price, qty);
 
         // Assert
         // 驗證是否正確鎖定了 Quote AssetV1 (1:USD)
@@ -92,7 +92,7 @@ class TradingServiceV1Test {
 
         // Act & Assert
         Exception exception = assertThrows(RuntimeException.class, () -> {
-            tradingService.placeOrder(1L, invalidMarketId, 0, new BigDecimal("100"), new BigDecimal("1"));
+            tradingService.placeOrder(1L, invalidMarketId, 0, 0, new BigDecimal("100"), new BigDecimal("1"));
         });
 
         assertTrue(exception.getMessage().contains("市場不存在"));
