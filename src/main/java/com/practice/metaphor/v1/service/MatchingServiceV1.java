@@ -39,6 +39,10 @@ public class MatchingServiceV1 {
         for (OrderV1 maker : makers) {
             if (remainingQty.compareTo(BigDecimal.ZERO) <= 0) break;
 
+            if (maker.getTraderId().equals(takerOrder.getTraderId())) {
+                continue; // 避免自成交 (Wash Trading)，直接跳過
+            }
+
             BigDecimal makerRemaining = maker.getTotalQty().subtract(maker.getFilledQty());
             BigDecimal matchQty = remainingQty.min(makerRemaining);
 
@@ -55,20 +59,9 @@ public class MatchingServiceV1 {
         int takerStatus = (remainingQty.compareTo(BigDecimal.ZERO) == 0) ? 2 : 1;
         orderMapper.updateOrderProgress(takerOrder.getId(), totalFilled, takerStatus);
 
-        // 【價格改進返還】如果買單完全成交，將多鎖定的「溢價金」解凍還給使用者
-        if (takerStatus == 2 && takerOrder.getSide() == 0) {
-            refundExcessFrozen(takerOrder);
-        }
-    }
-
-    private void refundExcessFrozen(OrderV1 order) {
-        BalanceV1 bal = balanceMapper.findByTraderIdAndAssetIdForUpdate(order.getTraderId(), order.getQuoteAssetId());
-        if (bal != null && bal.frozenAmount().compareTo(BigDecimal.ZERO) > 0) {
-            // 在極簡版中，我們假設一個資產同時只有一個掛單，直接將該資產的所有剩餘凍結歸零並轉回可用
-            // 專業版應精確追蹤「此訂單」鎖定的金額。
-            balanceMapper.updateBalance(order.getTraderId(), order.getQuoteAssetId(), 
-                bal.availableAmount().add(bal.frozenAmount()), BigDecimal.ZERO);
-        }
+        // 完美的逐筆溢價退款：每個交易發生時就結算不需要追蹤全局
+        // 刪除 refundExcessFrozen
+        // 沒用到的方法已在此被移除
     }
 
     private void executeClearing(OrderV1 taker, OrderV1 maker, BigDecimal matchQty, BigDecimal matchPrice) {
@@ -86,7 +79,15 @@ public class MatchingServiceV1 {
     }
 
     private void applyBuyerEffect(OrderV1 buyer, BigDecimal matchQty, BigDecimal matchAmount) {
-        updateBalanceAtomic(buyer.getTraderId(), buyer.getQuoteAssetId(), BigDecimal.ZERO, matchAmount.negate());
+        // 1. 算出這筆成交的量，當初被凍結了多少錢？
+        BigDecimal expectedLocked = matchQty.multiply(buyer.getPrice());
+        
+        // 2. 當初凍結的錢 - 實際花掉的錢 = 省下來的溢價退款
+        BigDecimal refundAmount = expectedLocked.subtract(matchAmount);
+
+        // 3. 買方可用餘額：+加上退款，買方凍結金額：-扣除當初這批數量的凍結金
+        // 這樣買方就不會多扣錢，同時精確抵銷對應的凍結。
+        updateBalanceAtomic(buyer.getTraderId(), buyer.getQuoteAssetId(), refundAmount, expectedLocked.negate());
         updateBalanceAtomic(buyer.getTraderId(), buyer.getBaseAssetId(), matchQty, BigDecimal.ZERO);
     }
 
