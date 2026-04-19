@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * 全域例外攔截器 - [終極安全版]
@@ -22,6 +23,16 @@ public class GlobalExceptionHandlerV1 {
     public ApiResponseV1<Void> handleBusinessException(BusinessExceptionV1 e) {
         log.warn("【業務攔截】: {}", e.getMessage());
         return ApiResponseV1.error(400, e.getMessage());
+    }
+
+    /**
+     * 【資源缺失】：例如瀏覽器自動請求的 favicon.ico，或是打錯的 API 路徑。
+     * 這些不屬於系統崩潰，我們將其視為 INFO 記錄即可。
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ApiResponseV1<Void> handleNoResourceFoundException(NoResourceFoundException e) {
+        log.info("【路徑不存在】: {}", e.getMessage());
+        return ApiResponseV1.error(404, "資源路徑不存在");
     }
 
     /**
