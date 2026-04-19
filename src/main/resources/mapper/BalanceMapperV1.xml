@@ -29,7 +29,8 @@
             available_amount,
             frozen_amount,
             updated_at
-        FROM balances
+        FROM
+            balances
     </select>
     
     <select id="findByTraderId" resultMap="BalanceMap">
@@ -40,8 +41,10 @@
             available_amount,
             frozen_amount,
             updated_at
-        FROM balances
-        WHERE trader_id = #{traderId}
+        FROM
+            balances
+        WHERE
+            trader_id = #{traderId}
     </select>
 
     <select id="findByTraderIdAndAssetIdForUpdate" resultMap="BalanceMap">
@@ -52,19 +55,24 @@
             available_amount,
             frozen_amount,
             updated_at
-        FROM balances
-        WHERE trader_id = #{traderId}
-          AND asset_id = #{assetId}
+        FROM
+            balances
+        WHERE
+            trader_id = #{traderId}
+            AND asset_id = #{assetId}
         FOR UPDATE
     </select>
 
     <update id="updateBalance">
-        UPDATE balances
-        SET available_amount = #{availableAmount},
+        UPDATE
+            balances
+        SET
+            available_amount = #{availableAmount},
             frozen_amount = #{frozenAmount},
             updated_at = NOW()
-        WHERE trader_id = #{traderId}
-          AND asset_id = #{assetId}
+        WHERE
+            trader_id = #{traderId}
+            AND asset_id = #{assetId}
     </update>
 
 </mapper>

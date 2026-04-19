@@ -18,45 +18,76 @@
     </resultMap>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO orders (trader_id, base_asset_id, quote_asset_id, side, price, total_qty, filled_qty, status)
-        VALUES (#{traderId}, #{baseAssetId}, #{quoteAssetId}, #{side}, #{price}, #{totalQty}, #{filledQty}, #{status})
+        INSERT INTO
+            orders (trader_id, base_asset_id, quote_asset_id, side, price, total_qty, filled_qty, status)
+        VALUES
+            (#{traderId}, #{baseAssetId}, #{quoteAssetId}, #{side}, #{price}, #{totalQty}, #{filledQty}, #{status})
     </insert>
 
     <select id="findByIdForUpdate" resultMap="OrderMap">
         SELECT 
-            id, trader_id, base_asset_id, quote_asset_id, side, price, 
-            total_qty, filled_qty, status, created_at
-        FROM orders 
-        WHERE id = #{id} FOR UPDATE
+            id,
+            trader_id,
+            base_asset_id,
+            quote_asset_id,
+            side,
+            price,
+            total_qty,
+            filled_qty,
+            status,
+            created_at
+        FROM
+            orders 
+        WHERE
+            id = #{id}
+        FOR UPDATE
     </select>
 
     <!-- 撮合核心：尋找最優對手單 -->
     <select id="findMakers" resultMap="OrderMap">
         SELECT 
-            id, trader_id, base_asset_id, quote_asset_id, side, price, 
-            total_qty, filled_qty, status, created_at
-        FROM orders
-        WHERE base_asset_id = #{baseAssetId}
-          AND quote_asset_id = #{quoteAssetId}
-          AND side = #{side}
-          AND status IN (0, 1) -- 0: 新訂單, 1: 部分成交
-          AND 
-          <choose>
-              <when test="side == 0"> <!-- 找對手買單 (賣家主動賣出時): 買價要高於等於我的賣價 -->
-                  <![CDATA[ price >= #{price} ]]> ORDER BY price DESC, created_at ASC
-              </when>
-              <otherwise>          <!-- 找對手賣單 (買家主動買入時): 賣價要低於等於我的買價 -->
-                  <![CDATA[ price <= #{price} ]]> ORDER BY price ASC, created_at ASC
-              </otherwise>
-          </choose>
-        FOR UPDATE -- 加鎖！避免同一張單子被多個成交情境重複吃掉
+            id,
+            trader_id,
+            base_asset_id,
+            quote_asset_id,
+            side,
+            price,
+            total_qty,
+            filled_qty,
+            status,
+            created_at
+        FROM
+            orders
+        WHERE
+            base_asset_id = #{baseAssetId}
+            AND quote_asset_id = #{quoteAssetId}
+            AND side = #{side}
+            AND status IN (0, 1) <!-- 0: 新訂單, 1: 部分成交 -->
+            <choose>
+                <when test="side == 0"> <!-- 找對手買單 (賣家主動賣出時): 買價要高於等於我的賣價 -->
+                    AND <![CDATA[ price >= #{price} ]]>
+                    ORDER BY
+                        price DESC,
+                        created_at ASC
+                </when>
+                <otherwise>          <!-- 找對手賣單 (買家主動買入時): 賣價要低於等於我的買價 -->
+                    AND <![CDATA[ price <= #{price} ]]>
+                    ORDER BY
+                        price ASC,
+                        created_at ASC
+                </otherwise>
+            </choose>
+        FOR UPDATE <!-- 加鎖！避免同一張單子被多個成交情境重複吃掉 -->
     </select>
 
     <update id="updateOrderProgress">
-        UPDATE orders
-        SET filled_qty = #{filledQty},
+        UPDATE
+            orders
+        SET
+            filled_qty = #{filledQty},
             status = #{status}
-        WHERE id = #{id}
+        WHERE
+            id = #{id}
     </update>
 
 </mapper>

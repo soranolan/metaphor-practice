@@ -21,8 +21,10 @@
             quote_asset_id,
             symbol,
             status
-        FROM markets
-        WHERE id = #{id}
+        FROM
+            markets
+        WHERE
+            id = #{id}
     </select>
 
 </mapper>
