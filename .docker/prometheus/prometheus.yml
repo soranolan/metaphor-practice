@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 2s # 每 2 秒抓取一次數據，壓力測試時比較有感
+
+scrape_configs:
+  - job_name: 'metaphor-practice'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080'] # 指向宿主機上的 Java 服務
