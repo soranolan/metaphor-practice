@@ -71,6 +71,43 @@ class TradingIntegrationTestV1 {
     }
 
     @Test
+    void testMultipleMatchesAndUnaffectedOrders_PriceImprovement() {
+        // --- 1. 紀錄 Bob 初始餘額 ---
+        BigDecimal initialBobUsd = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 1L).availableAmount();
+
+        // --- 2. Bob 下一個很低價的防守買單 (變成 Maker，不會成交) ---
+        // 買 10 股 VT @ 50 USD/股，需要預先鎖定 500 USD。
+        // 這筆 500 USD 的凍結金不應該在後續的其他訂單成交時被不小心解凍還回去！
+        tradingService.placeOrder(2L, 1L, 0, new BigDecimal("50.00"), new BigDecimal("10.00"));
+        
+        BalanceV1 bobAfterFirstOrder = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 1L);
+        org.junit.jupiter.api.Assertions.assertEquals(0, new BigDecimal("500.0000").compareTo(bobAfterFirstOrder.frozenAmount()), "Bob 第一張單應該凍結了 500");
+
+        // --- 3. Alice 佈置兩張賣單簿 (Maker) ---
+        // 掛賣 3 股 VT @ 90 USD/股
+        tradingService.placeOrder(1L, 1L, 1, new BigDecimal("90.00"), new BigDecimal("3.00"));
+        // 掛賣 2 股 VT @ 100 USD/股
+        tradingService.placeOrder(1L, 1L, 1, new BigDecimal("100.00"), new BigDecimal("2.00"));
+
+        // --- 4. Bob 高價主動吃單 (Taker)，橫跨兩筆不同價格的訂單 ---
+        // Bob 出價 110 USD/股，打算買 5 股 (觸發撮合時預先鎖定 550 USD)
+        // 他會依序吃到 Alice 的 90 元 x 3 股 (花 270)、100 元 x 2 股 (花 200)，總花費 470。
+        // 這筆訂單他將會獲得 (550 - 470) = 80 USD 的溢價退款。
+        tradingService.placeOrder(2L, 1L, 0, new BigDecimal("110.00"), new BigDecimal("5.00"));
+
+        // --- 5. 驗證 Bob (買家) 的凍結金與餘額 ---
+        BalanceV1 finalBobUsd = balanceMapper.findByTraderIdAndAssetIdForUpdate(2L, 1L);
+        
+        // Bob 總共解除了 550 的凍結，並實際扣款 470，所以：可用餘額 = 初始 - 500(防守單鎖定) - 470(實際花費)
+        BigDecimal expectedAvailable = initialBobUsd.subtract(new BigDecimal("970.0000"));
+        org.junit.jupiter.api.Assertions.assertEquals(0, expectedAvailable.compareTo(finalBobUsd.availableAmount()), "Bob 的剩餘可用餘額不對");
+
+        // 關鍵斷言！如果還是用舊版暴力的 refundExcessFrozen，這裡就會不小心變成 0（防守單的錢被誤退）。
+        // 用新的逐筆結算法，就會精確保留那沒動到的 500 USD！
+        org.junit.jupiter.api.Assertions.assertEquals(0, new BigDecimal("500.0000").compareTo(finalBobUsd.frozenAmount()), "Bob 防守單的 500 USD 必須被安全地保留在凍結中");
+    }
+
+    @Test
     void testMarketChaos_ConservationLaw() throws Exception {
         // --- 1. 準備隨機性因子 ---
         java.util.Random random = new java.util.Random();
