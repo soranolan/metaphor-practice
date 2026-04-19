@@ -1,3 +1,10 @@
+/**
+ * =========================================================================
+ * 🚀 k6 壓力測試啟動指令 (在專案根目錄執行):
+ * 
+ * docker run --rm -i grafana/k6 run - <.docker/k6/scripts/load-test.js
+ * =========================================================================
+ */
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { randomIntBetween } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
