@@ -27,3 +27,5 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin # 預設密碼，可自行修改
     volumes:
       - ./.docker/grafana/provisioning/datasources/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./.docker/grafana/provisioning/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./.docker/grafana/dashboards:/etc/grafana/provisioning/dashboards/metaphor
