@@ -87,10 +87,26 @@ tasks.jacocoTestReport {
 
 tasks.register<JavaExec>("dumpWal") {
     group = "help"
-    // Usage: ./gradlew dumpWal > dump.txt
+    // Usage: ./gradlew dumpWal [-Pv2file=custom-dir] > dump.txt
     description = "Dump the Chronicle Queue WAL content"
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("net.openhft.chronicle.queue.ChronicleReaderMain")
-    args("-d", "chronicle-data")
+    
+    val pathStr = project.findProperty("v2file")?.toString() ?: "chronicle-data"
+    args("-d", pathStr)
+    
+    jvmArgs(chronicleJvmArgs)
+}
+
+tasks.register<JavaExec>("dumpSnapshot") {
+    group = "help"
+    // Usage: ./gradlew dumpSnapshot [-Pv2file=snapshots/xxx.bin] [ > snapshot.txt ]
+    description = "Dump the latest snapshot content"
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("com.practice.metaphor.v2.util.SnapshotDumpV2")
+    
+    val pathStr = project.findProperty("v2file")?.toString() ?: "snapshots"
+    args(pathStr)
+    
     jvmArgs(chronicleJvmArgs)
 }
