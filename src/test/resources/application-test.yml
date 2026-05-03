@@ -25,4 +25,4 @@ v2:
     path: build/chronicle-data-test
   snapshot:
     path: build/snapshots-test
-    interval-ms: 300000
+    interval-ms: 60000

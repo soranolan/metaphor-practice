@@ -16,9 +16,9 @@ public class TradingControllerV2 implements TradingApiV2 {
     }
 
     @Override
-    public ApiResponseV2<String> placeOrder(Long traderId, OrderRequestV2 request) {
+    public ApiResponseV2<String> placeOrder(OrderRequestV2 request) {
         tradingService.placeOrder(
-                traderId,
+                request.traderId(),
                 request.marketId(),
                 request.type(),
                 request.side(),

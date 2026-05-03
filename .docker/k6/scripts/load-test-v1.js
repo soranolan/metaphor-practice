@@ -2,7 +2,7 @@
  * =========================================================================
  * 🚀 k6 壓力測試啟動指令 (在專案根目錄執行):
  * 
- * docker run --rm -i grafana/k6 run - <.docker/k6/scripts/load-test.js
+ * docker run --rm -i grafana/k6 run - <.docker/k6/scripts/load-test-v1.js
  * =========================================================================
  */
 import http from 'k6/http';

@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 @Schema(description = "V2 下單請求")
 public record OrderRequestV2(
 
+    @Schema(description = "交易員 ID", example = "1")
+    Long traderId,
+
     @Schema(description = "市場 ID", example = "1")
     Long marketId,
 
