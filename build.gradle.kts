@@ -84,3 +84,13 @@ tasks.jacocoTestReport {
 		csv.required.set(true)
 	}
 }
+
+tasks.register<JavaExec>("dumpWal") {
+    group = "help"
+    // Usage: ./gradlew dumpWal > dump.txt
+    description = "Dump the Chronicle Queue WAL content"
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("net.openhft.chronicle.queue.ChronicleReaderMain")
+    args("-d", "chronicle-data")
+    jvmArgs(chronicleJvmArgs)
+}
