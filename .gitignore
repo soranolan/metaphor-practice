@@ -36,6 +36,12 @@ out/
 ### VS Code ###
 .vscode/
 
+### macOS ###
 .DS_Store
 
+### Metaphor V2 Data ###
+chronicle-data/
+snapshots/
+
+### Agent ###
 .agents
