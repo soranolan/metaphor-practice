@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practice.metaphor.v2.mapper.OrderMapperV2">
+
+    <!-- V2 移除了 resultMap，因為 V2 不再從 DB 查詢 Order -->
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            orders (trader_id, base_asset_id, quote_asset_id, order_type, side, price, total_qty, filled_qty, status)
+        VALUES
+            (#{traderId}, #{baseAssetId}, #{quoteAssetId}, #{type}, #{side}, #{price}, #{totalQty}, #{filledQty}, #{status})
+    </insert>
+
+    <!-- 冪等更新進度，使用絕對值蓋掉，支援 Replay -->
+    <update id="updateOrderProgress">
+        UPDATE
+            orders
+        SET
+            filled_qty = #{filledQty},
+            status = #{status}
+        WHERE
+            id = #{id}
+    </update>
+
+</mapper>

@@ -33,3 +33,11 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+# V2 引擎相關配置
+v2:
+  chronicle:
+    path: ./chronicle-data
+  snapshot:
+    path: ./snapshots
+    interval-ms: 300000

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 /**
  * 全域例外攔截器 - [終極安全版]
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.practice.metaphor.v1.controller")
 public class GlobalExceptionHandlerV1 {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandlerV1.class);

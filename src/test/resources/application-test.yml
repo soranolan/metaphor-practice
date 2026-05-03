@@ -18,3 +18,11 @@ mybatis:
 logging:
   level:
     com.practice.metaphor.mapper: debug # 這樣測試時我們能看到真正的 SQL
+
+# V2 引擎相關配置
+v2:
+  chronicle:
+    path: build/chronicle-data-test
+  snapshot:
+    path: build/snapshots-test
+    interval-ms: 300000
