@@ -23,6 +23,18 @@ extra["tomcat.version"] = "11.0.21"
 // override jackson-bom version to fix CVE
 extra["jackson-bom.version"] = "3.1.1"
 
+val chronicleJvmArgs = listOf(
+	"--add-exports=java.base/jdk.internal.ref=ALL-UNNAMED",
+	"--add-exports=java.base/sun.nio.ch=ALL-UNNAMED",
+	"--add-exports=jdk.unsupported/sun.misc=ALL-UNNAMED",
+	"--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+	"--add-opens=jdk.compiler/com.sun.tools.javac=ALL-UNNAMED",
+	"--add-opens=java.base/java.lang=ALL-UNNAMED",
+	"--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+	"--add-opens=java.base/java.io=ALL-UNNAMED",
+	"--add-opens=java.base/java.util=ALL-UNNAMED"
+)
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(25)
@@ -34,23 +46,34 @@ repositories {
 }
 
 dependencies {
-  	implementation("org.springframework.boot:spring-boot-starter-actuator")
-  	implementation("org.springframework.boot:spring-boot-starter-webmvc")
-  	implementation("io.micrometer:micrometer-registry-prometheus")
-  	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	implementation("io.micrometer:micrometer-registry-prometheus")
+	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
-  	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-  	runtimeOnly("org.postgresql:postgresql")
-  	testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
-  	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
-  	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1")
+	implementation("com.lmax:disruptor:4.0.0")
+	implementation("net.openhft:chronicle-queue:5.27ea0")
+	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+	runtimeOnly("org.postgresql:postgresql")
+	testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
+	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+	testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1")
 	testImplementation("com.h2database:h2")
-  	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+jacoco {
+	toolVersion = "0.8.14"
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	jvmArgs(chronicleJvmArgs)
 	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.run.BootRun> {
+	jvmArgs(chronicleJvmArgs)
 }
 
 tasks.jacocoTestReport {
@@ -60,8 +83,4 @@ tasks.jacocoTestReport {
 		html.required.set(true)
 		csv.required.set(true)
 	}
-}
-
-jacoco {
-	toolVersion = "0.8.14"
 }
