@@ -1,6 +1,14 @@
 /**
  * =========================================================================
- * 🚀 k6 壓力測試 — V2 記憶體撮合引擎 (Disruptor + Chronicle Queue)
+ * k6 壓力測試 — V2 使用者節奏模擬
+ *
+ * 目標：用「虛擬交易員 + think time」觀察 V2 記憶體撮合引擎
+ * (Disruptor + Chronicle Queue) 在一般下單節奏下的表現。
+ *   - 每次 iteration 送出一筆訂單後 sleep 100~500ms
+ *   - iteration_duration 會包含 sleep，不可直接視為服務端延遲
+ *   - payload 混合限價單與市價單
+ *   - 適合和 V1 在相同本機條件下做相對比較
+ *   - 不適合拿來推估系統極限
  *
  * 啟動指令 (在專案根目錄執行):
  * docker run --rm -i grafana/k6 run - <.docker/k6/scripts/load-test-v2.0.js
